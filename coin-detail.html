@@ -19,8 +19,8 @@
         <div class="container nav-container">
             <div class="logo">
                 <a href="index.html">
-                    <img src="logo.png" alt="The Hadal Store" class="logo-image" onerror="this.style.display='none'; this.parentNode.innerHTML+='<span style="font-size:24px;color:#D4AF37;font-weight:bold;font-family:Cormorant Garamond,serif">THE HADAL STORE</span>';">
-                    <span class="logo-text">The Hadal Store</span>
+                    <img src="logo.png" alt="The Hadal Store" class="logo-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                    <span class="logo-text" style="display:none;font-size:24px;color:#D4AF37;font-weight:bold;font-family:'Cormorant Garamond',serif">THE HADAL STORE</span>
                 </a>
             </div>
             <ul class="nav-menu">
@@ -147,584 +147,352 @@
                                 </svg>
                                 Madinat al-Salam (Baghdad)
                             </span>
+                            <span class="meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                                Caliph al-Manṣūr
+                            </span>
                         </div>
                     </div>
 
-                    <!-- Price & Funding -->
-                    <div class="investment-summary">
-                        <div class="price-box">
-                            <div class="price-label">Total Value</div>
-                            <div class="price-value">$87,000</div>
-                        </div>
-                        <div class="price-box">
-                            <div class="price-label">Share Price</div>
-                            <div class="price-value primary">$87.00</div>
-                        </div>
-                        <div class="funding-status">
-                            <div class="funding-header">
-                                <span class="funding-percentage">71.3% Funded</span>
-                                <span class="funding-shares">287 of 1000 shares available</span>
+                    <!-- Investment Card -->
+                    <div class="investment-card" data-coin-id="abbasid-dinar-773">
+                        <div class="investment-header">
+                            <div class="price-section">
+                                <div class="price-label">Current Share Price</div>
+                                <div class="price-value">$87.00</div>
+                                <div class="price-change positive">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                        <polyline points="17 6 23 6 23 12"/>
+                                    </svg>
+                                    +5.2% this month
+                                </div>
                             </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 71.3%"></div>
+                            <div class="value-section">
+                                <div class="value-label">Total Coin Value</div>
+                                <div class="value-amount">$87,000</div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Investment Calculator -->
-                    <div class="investment-calculator">
-                        <h3 class="calculator-title">Calculate Your Investment</h3>
-                        <div class="calculator-controls">
-                            <div class="shares-input">
-                                <label for="shareQuantity">Number of Shares</label>
-                                <div class="input-group">
-                                    <button class="quantity-btn" onclick="adjustShares(-1)">−</button>
-                                    <input type="number" id="shareQuantity" value="10" min="1" max="287" onchange="updateInvestment()">
-                                    <button class="quantity-btn" onclick="adjustShares(1)">+</button>
+                        <div class="shares-info">
+                            <div class="shares-available">
+                                <div class="shares-label">Available Shares</div>
+                                <div class="shares-count">287 / 1,000</div>
+                                <div class="shares-bar">
+                                    <div class="shares-progress" style="width: 71.3%"></div>
                                 </div>
+                                <div class="shares-text">71.3% funded</div>
                             </div>
-                            <div class="investment-breakdown">
-                                <div class="breakdown-row">
-                                    <span>Share Price</span>
-                                    <span class="amount">$87.00</span>
+                        </div>
+
+                        <div class="investment-calculator">
+                            <label for="shareQuantity">Number of Shares</label>
+                            <div class="quantity-input">
+                                <button type="button" class="qty-decrease" onclick="adjustQuantity(-1)">−</button>
+                                <input type="number" id="shareQuantity" value="1" min="1" max="287" onchange="updateInvestmentCalculation()">
+                                <button type="button" class="qty-increase" onclick="adjustQuantity(1)">+</button>
+                            </div>
+                            
+                            <div class="calculation-result">
+                                <div class="calc-row">
+                                    <span>Your Investment</span>
+                                    <strong id="investmentAmount">$87.00</strong>
                                 </div>
-                                <div class="breakdown-row">
-                                    <span>Shares</span>
-                                    <span class="shares-count" id="sharesCount">10</span>
-                                </div>
-                                <div class="breakdown-row">
-                                    <span>Platform Fee (2.5%)</span>
-                                    <span class="amount" id="platformFee">$21.75</span>
-                                </div>
-                                <div class="breakdown-row total">
-                                    <span>Total Investment</span>
-                                    <span class="amount" id="totalAmount">$891.75</span>
-                                </div>
-                                <div class="ownership-info">
-                                    You will own <strong id="ownershipPercent">1.0%</strong> of this coin
+                                <div class="calc-row">
+                                    <span>Ownership</span>
+                                    <strong id="ownershipPercentage">0.1%</strong>
                                 </div>
                             </div>
                         </div>
-                        <button class="btn-primary btn-large btn-block" onclick="proceedToCheckout()">
+
+                        <button class="btn-primary btn-invest btn-large" onclick="openPaymentModal(getCoinDataById('abbasid-dinar-773'), parseInt(document.getElementById('shareQuantity').value))">
                             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                                <line x1="1" y1="10" x2="23" y2="10"/>
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <polyline points="19 12 12 19 5 12"/>
                             </svg>
-                            Proceed to Checkout
+                            Invest Now
                         </button>
-                        <p class="investment-disclaimer">
+
+                        <div class="investment-notice">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"/>
                                 <line x1="12" y1="8" x2="12" y2="12"/>
                                 <line x1="12" y1="16" x2="12.01" y2="16"/>
                             </svg>
-                            Investments involve risk. Read offering circular before investing.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Coin Details Tabs -->
-    <section class="coin-details-section">
-        <div class="container">
-            <div class="details-tabs">
-                <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
-                <button class="tab-btn" onclick="switchTab('history')">Historical Context</button>
-                <button class="tab-btn" onclick="switchTab('provenance')">Provenance</button>
-                <button class="tab-btn" onclick="switchTab('financials')">Financials</button>
-                <button class="tab-btn" onclick="switchTab('documents')">Documents</button>
-            </div>
-
-            <!-- Overview Tab -->
-            <div class="tab-content active" id="overview-tab">
-                <div class="content-grid">
-                    <div class="content-main">
-                        <h2>About This Coin</h2>
-                        <p class="lead">
-                            This historic gold dinar was minted in the City of Peace (Madinat al-Salam), today known as Baghdad, 
-                            under the reign of Caliph Abū Jaʿfar ʿAbd Allāh ibn Muḥammad al-Manṣūr during the Abbasid Caliphate.
-                        </p>
-                        <p>
-                            The year 157 Anno Hegirae (773 Anno Domini) marks a pivotal moment in Islamic monetary history. 
-                            This particular gold dinar made such a profound impression on King Offa of Mercia (757-796 CE), 
-                            one of Anglo-Saxon England's most powerful rulers, that he commissioned direct imitations featuring 
-                            Arabic inscriptions. These "Offa dinars" demonstrate the global reach and influence of Islamic monetary 
-                            systems on medieval European economies.
-                        </p>
-
-                        <h3>Specifications</h3>
-                        <div class="specs-grid">
-                            <div class="spec-item">
-                                <div class="spec-label">Dynasty</div>
-                                <div class="spec-value">Abbasid Caliphate</div>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-label">Ruler</div>
-                                <div class="spec-value">Caliph al-Manṣūr</div>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-label">Date</div>
-                                <div class="spec-value">157 AH / 773 CE</div>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-label">Mint</div>
-                                <div class="spec-value">Madinat al-Salam (Baghdad)</div>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-label">Metal</div>
-                                <div class="spec-value">Gold (98.5% purity)</div>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-label">Weight</div>
-                                <div class="spec-value">4.25 grams</div>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-label">Diameter</div>
-                                <div class="spec-value">19-20mm</div>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-label">Condition</div>
-                                <div class="spec-value">Exceptional (EF 45)</div>
-                            </div>
-                        </div>
-
-                        <h3>Why This Coin Matters</h3>
-                        <ul class="feature-list">
-                            <li>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                                <div>
-                                    <strong>Historical Significance:</strong> Influenced European coinage for centuries, 
-                                    particularly King Offa's monetary reforms in Anglo-Saxon England.
-                                </div>
-                            </li>
-                            <li>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                                <div>
-                                    <strong>Islamic Golden Age:</strong> Minted during the height of Abbasid power when 
-                                    Baghdad was the world's intellectual and commercial center.
-                                </div>
-                            </li>
-                            <li>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                                <div>
-                                    <strong>Cross-Cultural Impact:</strong> Demonstrates the interconnected nature of 
-                                    8th-century trade networks and monetary systems.
-                                </div>
-                            </li>
-                            <li>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                                <div>
-                                    <strong>Investment Quality:</strong> Museum-grade authentication, exceptional condition, 
-                                    and documented provenance.
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="content-sidebar">
-                        <div class="info-card">
-                            <h4>Quick Facts</h4>
-                            <div class="fact-item">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                </svg>
-                                <div>
-                                    <div class="fact-label">Rarity</div>
-                                    <div class="fact-value">Extremely Rare</div>
-                                </div>
-                            </div>
-                            <div class="fact-item">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                                    <polyline points="17 6 23 6 23 12"/>
-                                </svg>
-                                <div>
-                                    <div class="fact-label">Annual Appreciation</div>
-                                    <div class="fact-value">6-8% (historical)</div>
-                                </div>
-                            </div>
-                            <div class="fact-item">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                                </svg>
-                                <div>
-                                    <div class="fact-label">Insurance</div>
-                                    <div class="fact-value">Fully Insured ($87K)</div>
-                                </div>
-                            </div>
-                            <div class="fact-item">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                    <circle cx="12" cy="10" r="3"/>
-                                </svg>
-                                <div>
-                                    <div class="fact-label">Storage</div>
-                                    <div class="fact-value">Climate-Controlled Vault</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="info-card">
-                            <h4>Investment Timeline</h4>
-                            <div class="timeline">
-                                <div class="timeline-item">
-                                    <div class="timeline-dot"></div>
-                                    <div class="timeline-content">
-                                        <div class="timeline-title">Offering Opens</div>
-                                        <div class="timeline-date">Now</div>
-                                    </div>
-                                </div>
-                                <div class="timeline-item">
-                                    <div class="timeline-dot"></div>
-                                    <div class="timeline-content">
-                                        <div class="timeline-title">Funding Target</div>
-                                        <div class="timeline-date">30 days</div>
-                                    </div>
-                                </div>
-                                <div class="timeline-item">
-                                    <div class="timeline-dot"></div>
-                                    <div class="timeline-content">
-                                        <div class="timeline-title">First Appraisal</div>
-                                        <div class="timeline-date">12 months</div>
-                                    </div>
-                                </div>
-                                <div class="timeline-item">
-                                    <div class="timeline-dot"></div>
-                                    <div class="timeline-content">
-                                        <div class="timeline-title">Exit Options Available</div>
-                                        <div class="timeline-date">18 months</div>
-                                    </div>
-                                </div>
-                            </div>
+                            <span>Investments are subject to market risk. Minimum investment: 1 share ($87)</span>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- History Tab -->
-            <div class="tab-content" id="history-tab">
-                <div class="content-grid">
-                    <div class="content-main">
-                        <h2>Historical Context</h2>
-                        
-                        <h3>The Abbasid Caliphate & Islamic Golden Age</h3>
-                        <p>
-                            The Abbasid dynasty (750-1258 CE) represented the pinnacle of Islamic civilization. Under Caliph 
-                            Abū Jaʿfar al-Manṣūr (754-775 CE), Baghdad—known as Madinat al-Salam (City of Peace)—became the 
-                            world's intellectual, commercial, and cultural epicenter. The city housed the legendary House of Wisdom, 
-                            where scholars from diverse backgrounds translated and advanced knowledge in mathematics, astronomy, 
-                            medicine, and philosophy.
-                        </p>
-
-                        <h3>Monetary Revolution</h3>
-                        <p>
-                            The Abbasid gold dinar became the international currency of trade, circulating from Spain to Central Asia. 
-                            Its consistent weight (4.25 grams) and purity (98.5% gold) made it the "reserve currency" of the medieval 
-                            world, much like the US dollar today. The standardization of Islamic coinage facilitated unprecedented 
-                            economic integration across three continents.
-                        </p>
-
-                        <h3>The Offa Connection</h3>
-                        <p>
-                            King Offa of Mercia (757-796 CE), one of the most powerful Anglo-Saxon rulers, was so impressed by the 
-                            Abbasid gold dinar of 773 CE that he commissioned his own gold coins bearing Arabic inscriptions. These 
-                            "Offa dinars" are among the most valuable coins in British numismatics, with specimens selling for over 
-                            £500,000 at auction. The imitation demonstrates that Islamic monetary influence extended even to distant 
-                            Anglo-Saxon England, centuries before formal diplomatic relations.
-                        </p>
-
-                        <div class="historical-image-placeholder">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                                <circle cx="8.5" cy="8.5" r="1.5"/>
-                                <polyline points="21 15 16 10 5 21"/>
-                            </svg>
-                            <p>Historical maps and contemporary accounts document the extensive trade networks that made the Abbasid dinar a truly global currency.</p>
+                    <!-- Coin Details Tabs -->
+                    <div class="details-tabs">
+                        <div class="tab-buttons">
+                            <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+                            <button class="tab-btn" onclick="switchTab('history')">Historical Context</button>
+                            <button class="tab-btn" onclick="switchTab('authenticity')">Authenticity</button>
+                            <button class="tab-btn" onclick="switchTab('investment')">Investment Terms</button>
                         </div>
 
-                        <h3>Cultural Legacy</h3>
-                        <p>
-                            The year 773 CE marks a high point in Abbasid power. al-Manṣūr had recently completed the Round City of 
-                            Baghdad, an architectural marvel that symbolized Islamic civilization's technological and organizational 
-                            sophistication. Trade caravans carrying these dinars connected the Mediterranean with the Indian Ocean, 
-                            facilitating not just commerce but also the exchange of ideas that would shape the medieval and Renaissance 
-                            worlds.
-                        </p>
-                    </div>
-                    <div class="content-sidebar">
-                        <div class="info-card">
-                            <h4>Key Dates</h4>
-                            <div class="date-list">
-                                <div class="date-item">
-                                    <strong>750 CE</strong>
-                                    <p>Abbasid Revolution</p>
-                                </div>
-                                <div class="date-item">
-                                    <strong>762 CE</strong>
-                                    <p>Baghdad Founded</p>
-                                </div>
-                                <div class="date-item">
-                                    <strong>773 CE</strong>
-                                    <p>This Coin Minted</p>
-                                </div>
-                                <div class="date-item">
-                                    <strong>775 CE</strong>
-                                    <p>al-Manṣūr Dies</p>
-                                </div>
-                                <div class="date-item">
-                                    <strong>796 CE</strong>
-                                    <p>King Offa Dies</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Provenance Tab -->
-            <div class="tab-content" id="provenance-tab">
-                <div class="content-grid">
-                    <div class="content-main">
-                        <h2>Provenance & Authentication</h2>
-                        
-                        <h3>Chain of Custody</h3>
-                        <div class="provenance-chain">
-                            <div class="provenance-item">
-                                <div class="prov-year">773 CE</div>
-                                <div class="prov-content">
-                                    <strong>Minting</strong>
-                                    <p>Coin minted at the Baghdad mint under Caliph al-Manṣūr</p>
-                                </div>
-                            </div>
-                            <div class="provenance-item">
-                                <div class="prov-year">19th Century</div>
-                                <div class="prov-content">
-                                    <strong>European Collection</strong>
-                                    <p>Part of a private European numismatic collection, documented in estate records</p>
-                                </div>
-                            </div>
-                            <div class="provenance-item">
-                                <div class="prov-year">1985</div>
-                                <div class="prov-content">
-                                    <strong>Museum Exhibition</strong>
-                                    <p>Featured in "Islamic Coinage" exhibition at major museum</p>
-                                </div>
-                            </div>
-                            <div class="provenance-item">
-                                <div class="prov-year">2019</div>
-                                <div class="prov-content">
-                                    <strong>Auction House</strong>
-                                    <p>Acquired at Christie's Islamic Art auction with full documentation</p>
-                                </div>
-                            </div>
-                            <div class="provenance-item">
-                                <div class="prov-year">2025</div>
-                                <div class="prov-content">
-                                    <strong>The Hadal Store Acquisition</strong>
-                                    <p>Purchased for fractional ownership program with complete authentication</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <h3>Authentication & Grading</h3>
-                        <p>
-                            This coin has been authenticated and graded by leading numismatic certification services. 
-                            The authentication process included:
-                        </p>
-                        <ul class="feature-list">
-                            <li>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                                <div>Metallurgical analysis confirming 98.5% gold content</div>
-                            </li>
-                            <li>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                                <div>Weight verification (4.25 grams, within period standards)</div>
-                            </li>
-                            <li>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                                <div>Die study matching known Abbasid mint patterns</div>
-                            </li>
-                            <li>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                                <div>Calligraphic analysis of Arabic inscriptions</div>
-                            </li>
-                            <li>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                                <div>X-ray fluorescence (XRF) testing</div>
-                            </li>
-                            <li>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                                <div>Comparison with museum reference specimens</div>
-                            </li>
-                        </ul>
-
-                        <div class="cert-images">
-                            <div class="cert-placeholder">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <polyline points="14 2 14 8 20 8"/>
-                                    <path d="M12 18v-6M9 15l3 3 3-3"/>
-                                </svg>
-                                <p>Authentication Certificate</p>
-                            </div>
-                            <div class="cert-placeholder">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <polyline points="14 2 14 8 20 8"/>
-                                    <path d="M12 18v-6M9 15l3 3 3-3"/>
-                                </svg>
-                                <p>Grading Report</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="content-sidebar">
-                        <div class="info-card">
-                            <h4>Expert Opinions</h4>
-                            <blockquote>
-                                "An exceptional example of Abbasid coinage from the al-Manṣūr period. The strike quality 
-                                and preservation make this a museum-worthy specimen."
-                                <footer>— Dr. Michael Bates, Islamic Numismatist</footer>
-                            </blockquote>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Financials Tab -->
-            <div class="tab-content" id="financials-tab">
-                <div class="content-grid">
-                    <div class="content-main">
-                        <h2>Financial Information</h2>
-                        
-                        <h3>Valuation</h3>
-                        <div class="valuation-table">
-                            <div class="val-row">
-                                <span>Purchase Price (2025)</span>
-                                <span class="amount">$87,000</span>
-                            </div>
-                            <div class="val-row">
-                                <span>Comparable Sales (2024-2025)</span>
-                                <span class="amount">$79,000 - $95,000</span>
-                            </div>
-                            <div class="val-row">
-                                <span>Expert Appraisal</span>
-                                <span class="amount">$87,000</span>
-                            </div>
-                            <div class="val-row">
-                                <span>Insurance Value</span>
-                                <span class="amount">$87,000</span>
-                            </div>
-                        </div>
-
-                        <h3>Fee Structure</h3>
-                        <div class="fee-structure">
-                            <div class="fee-item">
-                                <div class="fee-name">
-                                    <strong>Purchase Fee</strong>
-                                    <p>One-time fee on initial investment</p>
-                                </div>
-                                <div class="fee-amount">2.5%</div>
-                            </div>
-                            <div class="fee-item">
-                                <div class="fee-name">
-                                    <strong>Annual Management Fee</strong>
-                                    <p>Covers storage, insurance, and administration</p>
-                                </div>
-                                <div class="fee-amount">1.5%</div>
-                            </div>
-                            <div class="fee-item">
-                                <div class="fee-name">
-                                    <strong>Secondary Market Fee</strong>
-                                    <p>When selling shares to other investors</p>
-                                </div>
-                                <div class="fee-amount">2.5%</div>
-                            </div>
-                            <div class="fee-item">
-                                <div class="fee-name">
-                                    <strong>Exit Fee</strong>
-                                    <p>If coin is sold and liquidated</p>
-                                </div>
-                                <div class="fee-amount">3.0%</div>
-                            </div>
-                        </div>
-
-                        <h3>Historical Performance</h3>
-                        <p>
-                            While past performance does not guarantee future results, similar Abbasid dinars from this period 
-                            have shown consistent appreciation:
-                        </p>
-                        <div class="performance-table">
-                            <div class="perf-row header">
-                                <span>Period</span>
-                                <span>Average Annual Return</span>
-                            </div>
-                            <div class="perf-row">
-                                <span>5 Years</span>
-                                <span class="positive">+6.2%</span>
-                            </div>
-                            <div class="perf-row">
-                                <span>10 Years</span>
-                                <span class="positive">+7.8%</span>
-                            </div>
-                            <div class="perf-row">
-                                <span>20 Years</span>
-                                <span class="positive">+8.4%</span>
-                            </div>
-                        </div>
-                        <p class="disclaimer-small">
-                            Based on auction data from Christie's, Sotheby's, and Heritage Auctions for comparable specimens.
-                        </p>
-
-                        <h3>Risk Factors</h3>
-                        <ul class="risk-list">
-                            <li><strong>Liquidity Risk:</strong> Historic coins may be difficult to sell quickly</li>
-                            <li><strong>Market Risk:</strong> Values can fluctuate based on collector demand</li>
-                            <li><strong>Condition Risk:</strong> Damage or deterioration could reduce value</li>
-                            <li><strong>Authentication Risk:</strong> Future challenges to authenticity (mitigated by insurance)</li>
-                            <li><strong>Regulatory Risk:</strong> Changes in securities regulations</li>
-                        </ul>
-                    </div>
-                    <div class="content-sidebar">
-                        <div class="info-card">
-                            <h4>Calculator</h4>
-                            <div class="projection-calc">
-                                <label>Investment Amount</label>
-                                <input type="number" value="1000" id="projectionAmount" onchange="updateProjections()">
+                        <div class="tab-content">
+                            <div id="overview" class="tab-pane active">
+                                <h3>About This Coin</h3>
+                                <p>
+                                    This exceptional Abbasid gold dinar represents a pivotal moment in Islamic history, 
+                                    minted during the reign of Caliph al-Manṣūr, the founder of Baghdad and one of the 
+                                    most influential rulers of the early Islamic period.
+                                </p>
                                 
-                                <label>Time Horizon</label>
-                                <select id="projectionYears" onchange="updateProjections()">
-                                    <option value="5">5 years</option>
-                                    <option value="10" selected>10 years</option>
-                                    <option value="20">20 years</option>
-                                </select>
+                                <div class="specifications">
+                                    <h4>Specifications</h4>
+                                    <div class="spec-grid">
+                                        <div class="spec-item">
+                                            <div class="spec-label">Period</div>
+                                            <div class="spec-value">157 AH / 773 CE</div>
+                                        </div>
+                                        <div class="spec-item">
+                                            <div class="spec-label">Ruler</div>
+                                            <div class="spec-value">Caliph al-Manṣūr</div>
+                                        </div>
+                                        <div class="spec-item">
+                                            <div class="spec-label">Mint</div>
+                                            <div class="spec-value">Madinat al-Salam</div>
+                                        </div>
+                                        <div class="spec-item">
+                                            <div class="spec-label">Dynasty</div>
+                                            <div class="spec-value">Abbasid Caliphate</div>
+                                        </div>
+                                        <div class="spec-item">
+                                            <div class="spec-label">Material</div>
+                                            <div class="spec-value">Gold (23-24k)</div>
+                                        </div>
+                                        <div class="spec-item">
+                                            <div class="spec-label">Weight</div>
+                                            <div class="spec-value">~4.25g</div>
+                                        </div>
+                                        <div class="spec-item">
+                                            <div class="spec-label">Diameter</div>
+                                            <div class="spec-value">~20mm</div>
+                                        </div>
+                                        <div class="spec-item">
+                                            <div class="spec-label">Condition</div>
+                                            <div class="spec-value">Exceptional</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="inscriptions">
+                                    <h4>Inscriptions</h4>
+                                    <div class="inscription-block">
+                                        <div class="inscription-side">Obverse</div>
+                                        <p class="arabic-text">لا إله إلا الله وحده لا شريك له</p>
+                                        <p class="translation">"There is no god but God alone, He has no partner"</p>
+                                    </div>
+                                    <div class="inscription-block">
+                                        <div class="inscription-side">Reverse</div>
+                                        <p class="arabic-text">محمد رسول الله أرسله بالهدى ودين الحق</p>
+                                        <p class="translation">"Muhammad is the messenger of God, sent with guidance and the religion of truth"</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="history" class="tab-pane">
+                                <h3>Historical Context</h3>
                                 
-                                <div class="projection-result">
-                                    <div class="proj-label">Projected Value</div>
-                                    <div class="proj-value" id="projectedValue">$2,159</div>
-                                    <div class="proj-note">Based on 8% annual appreciation</div>
+                                <div class="timeline-section">
+                                    <h4>The Abbasid Golden Age</h4>
+                                    <p>
+                                        The Abbasid Caliphate (750-1258 CE) represented one of the most significant periods 
+                                        in Islamic and world history. This coin was minted during the reign of al-Manṣūr 
+                                        (754-775 CE), the second Abbasid caliph and the true founder of the dynasty's power.
+                                    </p>
+                                </div>
+
+                                <div class="historical-significance">
+                                    <h4>Significance of This Period</h4>
+                                    <ul>
+                                        <li>
+                                            <strong>Foundation of Baghdad (762 CE):</strong> Al-Manṣūr founded Madinat al-Salam 
+                                            (City of Peace), which became the intellectual and cultural capital of the Islamic world.
+                                        </li>
+                                        <li>
+                                            <strong>Economic Prosperity:</strong> The standardization of coinage under al-Manṣūr 
+                                            facilitated trade across the vast empire, from Spain to Central Asia.
+                                        </li>
+                                        <li>
+                                            <strong>Cultural Renaissance:</strong> This period marked the beginning of the Islamic 
+                                            Golden Age, with advances in science, mathematics, astronomy, and philosophy.
+                                        </li>
+                                        <li>
+                                            <strong>Administrative Innovation:</strong> Al-Manṣūr established efficient governance 
+                                            systems that would influence Islamic empires for centuries.
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="caliph-profile">
+                                    <h4>About Caliph al-Manṣūr</h4>
+                                    <p>
+                                        Abu Ja'far al-Manṣūr (714-775 CE) was renowned for his administrative genius and 
+                                        political acumen. His reign saw the consolidation of Abbasid power and the 
+                                        establishment of Baghdad as a center of learning and commerce. He was known for 
+                                        his patronage of scholars and his vision of creating a cosmopolitan capital that 
+                                        would rival any city in the world.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div id="authenticity" class="tab-pane">
+                                <h3>Authentication & Provenance</h3>
+                                
+                                <div class="authentication-details">
+                                    <h4>Certification</h4>
+                                    <p>
+                                        This coin has been authenticated by leading numismatic experts specializing in 
+                                        early Islamic coinage. The authentication process includes:
+                                    </p>
+                                    <ul>
+                                        <li>Physical examination and weight verification</li>
+                                        <li>Metallurgical analysis confirming gold content and period-appropriate composition</li>
+                                        <li>Epigraphic analysis of inscriptions and calligraphy</li>
+                                        <li>Comparative analysis with museum specimens</li>
+                                        <li>X-ray fluorescence (XRF) testing</li>
+                                    </ul>
+                                </div>
+
+                                <div class="provenance">
+                                    <h4>Provenance</h4>
+                                    <p>
+                                        This coin comes from a distinguished private collection with documented provenance. 
+                                        The piece has been held in climate-controlled storage and has been catalogued in 
+                                        academic publications on early Islamic numismatics.
+                                    </p>
+                                </div>
+
+                                <div class="grading">
+                                    <h4>Condition & Grading</h4>
+                                    <p>
+                                        <strong>Grade: Exceptional</strong>
+                                    </p>
+                                    <p>
+                                        The coin exhibits remarkable preservation for its age, with clear inscriptions 
+                                        and minimal wear. The strike is well-centered with excellent detail visible in 
+                                        the calligraphy. Minor surface marks are consistent with age and handling over 
+                                        twelve centuries but do not detract from the coin's overall exceptional quality.
+                                    </p>
+                                </div>
+
+                                <div class="storage-security">
+                                    <h4>Storage & Security</h4>
+                                    <p>
+                                        The physical coin is stored in a state-of-the-art, climate-controlled vault facility 
+                                        with 24/7 security monitoring. The storage location is fully insured by Lloyd's of 
+                                        London for the coin's full appraised value. Investors have fractional ownership 
+                                        rights secured through blockchain-based tokenization.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div id="investment" class="tab-pane">
+                                <h3>Investment Structure & Terms</h3>
+                                
+                                <div class="investment-structure">
+                                    <h4>Ownership Model</h4>
+                                    <p>
+                                        The coin is divided into 1,000 shares, each representing 0.1% ownership. 
+                                        Shares are tokenized on a secure blockchain platform, providing transparent 
+                                        and verifiable ownership records.
+                                    </p>
+                                </div>
+
+                                <div class="terms-grid">
+                                    <div class="term-item">
+                                        <div class="term-label">Minimum Investment</div>
+                                        <div class="term-value">1 share ($87)</div>
+                                    </div>
+                                    <div class="term-item">
+                                        <div class="term-label">Maximum Investment</div>
+                                        <div class="term-value">287 shares available</div>
+                                    </div>
+                                    <div class="term-item">
+                                        <div class="term-label">Total Shares</div>
+                                        <div class="term-value">1,000 shares</div>
+                                    </div>
+                                    <div class="term-item">
+                                        <div class="term-label">Lock-up Period</div>
+                                        <div class="term-value">12 months</div>
+                                    </div>
+                                    <div class="term-item">
+                                        <div class="term-label">Secondary Market</div>
+                                        <div class="term-value">Available after lock-up</div>
+                                    </div>
+                                    <div class="term-item">
+                                        <div class="term-label">Valuation Method</div>
+                                        <div class="term-value">Annual appraisal</div>
+                                    </div>
+                                </div>
+
+                                <div class="investor-rights">
+                                    <h4>Investor Rights</h4>
+                                    <ul>
+                                        <li>Fractional ownership proportional to shares held</li>
+                                        <li>Participation in appreciation of coin value</li>
+                                        <li>Access to detailed quarterly reports</li>
+                                        <li>Ability to transfer shares after lock-up period</li>
+                                        <li>Voting rights on major decisions (for holdings >5%)</li>
+                                        <li>Priority access to related investment opportunities</li>
+                                    </ul>
+                                </div>
+
+                                <div class="fees-structure">
+                                    <h4>Fees & Costs</h4>
+                                    <div class="fee-table">
+                                        <div class="fee-row">
+                                            <span>Purchase Fee</span>
+                                            <span>2.9% + $0.30 (payment processing)</span>
+                                        </div>
+                                        <div class="fee-row">
+                                            <span>Annual Management Fee</span>
+                                            <span>1.5% of share value</span>
+                                        </div>
+                                        <div class="fee-row">
+                                            <span>Storage & Insurance</span>
+                                            <span>Included in management fee</span>
+                                        </div>
+                                        <div class="fee-row">
+                                            <span>Exit Fee (if sold)</span>
+                                            <span>3% of transaction value</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="risk-factors">
+                                    <h4>Risk Factors</h4>
+                                    <ul>
+                                        <li>
+                                            <strong>Market Risk:</strong> The value of historic coins can fluctuate based 
+                                            on collector demand, economic conditions, and market trends.
+                                        </li>
+                                        <li>
+                                            <strong>Liquidity Risk:</strong> There is no guarantee of a liquid secondary 
+                                            market for shares, and you may not be able to sell your shares when desired.
+                                        </li>
+                                        <li>
+                                            <strong>Authenticity Risk:</strong> Despite thorough authentication, there is 
+                                            always a small risk of mis-attribution or future challenges to authenticity.
+                                        </li>
+                                        <li>
+                                            <strong>Storage Risk:</strong> Physical damage, theft, or loss could impact 
+                                            value despite insurance coverage.
+                                        </li>
+                                        <li>
+                                            <strong>Regulatory Risk:</strong> Changes in securities regulations could 
+                                            affect the structure or tradability of shares.
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -732,99 +500,71 @@
                 </div>
             </div>
 
-            <!-- Documents Tab -->
-            <div class="tab-content" id="documents-tab">
-                <div class="content-grid">
-                    <div class="content-main">
-                        <h2>Legal Documents</h2>
+            <!-- Documents Section -->
+            <div class="documents-legal-section">
+                <div class="content-main">
+                    <div class="documents-section">
+                        <h3>Investment Documents</h3>
+                        <p>Review all offering materials before investing:</p>
                         
                         <div class="document-list">
                             <div class="document-item">
-                                <div class="doc-icon">
+                                <div class="document-icon">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                                         <polyline points="14 2 14 8 20 8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
+                                        <polyline points="10 9 9 9 8 9"/>
                                     </svg>
                                 </div>
-                                <div class="doc-info">
+                                <div class="document-info">
                                     <h4>Offering Circular</h4>
-                                    <p>Complete offering details, financial projections, and risk disclosures</p>
-                                    <div class="doc-meta">PDF • 2.4 MB • Updated Jan 2026</div>
+                                    <p>Complete details about the investment opportunity</p>
                                 </div>
                                 <a href="#" class="btn-secondary btn-small">Download</a>
                             </div>
 
                             <div class="document-item">
-                                <div class="doc-icon">
+                                <div class="document-icon">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                                         <polyline points="14 2 14 8 20 8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
                                     </svg>
                                 </div>
-                                <div class="doc-info">
-                                    <h4>Operating Agreement</h4>
-                                    <p>Delaware LLC operating agreement for Abbasid Dinar 773 CE, LLC</p>
-                                    <div class="doc-meta">PDF • 856 KB • Jan 2026</div>
+                                <div class="document-info">
+                                    <h4>Authentication Report</h4>
+                                    <p>Professional numismatic authentication and grading</p>
                                 </div>
                                 <a href="#" class="btn-secondary btn-small">Download</a>
                             </div>
 
                             <div class="document-item">
-                                <div class="doc-icon">
+                                <div class="document-icon">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                                         <polyline points="14 2 14 8 20 8"/>
                                     </svg>
                                 </div>
-                                <div class="doc-info">
-                                    <h4>Authentication Certificate</h4>
-                                    <p>Professional numismatic authentication and grading report</p>
-                                    <div class="doc-meta">PDF • 1.2 MB • Dec 2025</div>
-                                </div>
-                                <a href="#" class="btn-secondary btn-small">Download</a>
-                            </div>
-
-                            <div class="document-item">
-                                <div class="doc-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                        <polyline points="14 2 14 8 20 8"/>
-                                    </svg>
-                                </div>
-                                <div class="doc-info">
-                                    <h4>Insurance Policy</h4>
-                                    <p>Comprehensive insurance coverage for storage and transit</p>
-                                    <div class="doc-meta">PDF • 642 KB • Jan 2026</div>
-                                </div>
-                                <a href="#" class="btn-secondary btn-small">Download</a>
-                            </div>
-
-                            <div class="document-item">
-                                <div class="doc-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                        <polyline points="14 2 14 8 20 8"/>
-                                    </svg>
-                                </div>
-                                <div class="doc-info">
-                                    <h4>Storage Agreement</h4>
-                                    <p>Terms and conditions for professional vault storage</p>
-                                    <div class="doc-meta">PDF • 384 KB • Jan 2026</div>
-                                </div>
-                                <a href="#" class="btn-secondary btn-small">Download</a>
-                            </div>
-
-                            <div class="document-item">
-                                <div class="doc-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                        <polyline points="14 2 14 8 20 8"/>
-                                    </svg>
-                                </div>
-                                <div class="doc-info">
+                                <div class="document-info">
                                     <h4>Subscription Agreement</h4>
-                                    <p>Agreement for purchasing shares in this offering</p>
-                                    <div class="doc-meta">PDF • 728 KB • Jan 2026</div>
+                                    <p>Terms and conditions of share ownership</p>
+                                </div>
+                                <a href="#" class="btn-secondary btn-small">Download</a>
+                            </div>
+
+                            <div class="document-item">
+                                <div class="document-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                    </svg>
+                                </div>
+                                <div class="document-info">
+                                    <h4>Risk Disclosures</h4>
+                                    <p>Important information about investment risks</p>
                                 </div>
                                 <a href="#" class="btn-secondary btn-small">Download</a>
                             </div>
@@ -846,11 +586,33 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="content-sidebar">
                         <div class="info-card">
                             <h4>Need Help?</h4>
                             <p>Our investor relations team is available to answer your questions.</p>
-                            <a href="mailto:eric@xclr8er.com" class="btn-secondary btn-block">Contact Us</a>
+                            
+                            <!-- Contact Form -->
+                            <div class="contact-form-section">
+                                <h3 style="color: #D4AF37; margin-bottom: 1rem; font-size: 1.25rem;">Contact Us</h3>
+                                <form action="https://formspree.io/f/maqjqqjn" method="POST">
+                                    <div style="margin-bottom: 1rem;">
+                                        <input type="text" name="name" placeholder="Your Name" required 
+                                               style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; color: #fff; font-size: 14px;">
+                                    </div>
+                                    <div style="margin-bottom: 1rem;">
+                                        <input type="email" name="email" placeholder="Your Email" required 
+                                               style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; color: #fff; font-size: 14px;">
+                                    </div>
+                                    <div style="margin-bottom: 1rem;">
+                                        <textarea name="message" placeholder="Your Message" required rows="4"
+                                                  style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; color: #fff; font-size: 14px; resize: vertical;"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn-primary" style="width: 100%;">
+                                        Send Message
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -897,7 +659,7 @@
     <footer class="footer">
         <div class="container footer-content">
             <div class="footer-section">
-                <img src="logo.png" alt="The Hadal Store" class="footer-logo">
+                <img src="logo.png" alt="The Hadal Store" class="footer-logo" onerror="this.style.display='none'">
                 <p class="footer-description">
                     Making museum-quality historic Islamic and Aksumite coins accessible through fractional ownership 
                     and modern technology.
@@ -944,10 +706,7 @@
 
     <!-- Scripts -->
     <script src="script.js"></script>
-    <script src="stripe-payment.js"></script>
+    <script src="stripe-payment-fixed.js"></script>
     <script src="coin-detail.js"></script>
-
-
-
 </body>
 </html>

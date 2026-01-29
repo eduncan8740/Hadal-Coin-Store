@@ -1,26 +1,41 @@
 // ================================================
-// COIN DETAIL PAGE JAVASCRIPT
+// COIN DETAIL PAGE JAVASCRIPT - FIXED VERSION
 // ================================================
 
 // Investment Calculator
 let sharePrice = 87.00;
 let platformFeePercent = 0.025;
 
-function updateInvestment() {
+// FIXED: Renamed to match HTML onchange calls
+function updateInvestmentCalculation() {
     const shares = parseInt(document.getElementById('shareQuantity').value) || 0;
     const subtotal = shares * sharePrice;
     const platformFee = subtotal * platformFeePercent;
     const total = subtotal + platformFee;
     const ownershipPercent = (shares / 1000) * 100;
     
-    document.getElementById('sharesCount').textContent = shares;
-    document.getElementById('platformFee').textContent = '$' + platformFee.toFixed(2);
-    document.getElementById('totalAmount').textContent = '$' + total.toFixed(2);
-    document.getElementById('ownershipPercent').textContent = ownershipPercent.toFixed(2) + '%';
+    // Update display elements
+    const investmentAmount = document.getElementById('investmentAmount');
+    const ownershipPercentage = document.getElementById('ownershipPercentage');
+    
+    if (investmentAmount) {
+        investmentAmount.textContent = '$' + subtotal.toFixed(2);
+    }
+    
+    if (ownershipPercentage) {
+        ownershipPercentage.textContent = ownershipPercent.toFixed(2) + '%';
+    }
+}
+
+// Kept for backward compatibility
+function updateInvestment() {
+    updateInvestmentCalculation();
 }
 
 function adjustShares(amount) {
     const input = document.getElementById('shareQuantity');
+    if (!input) return;
+    
     let currentValue = parseInt(input.value) || 0;
     let newValue = currentValue + amount;
     
@@ -29,9 +44,10 @@ function adjustShares(amount) {
     if (newValue > 287) newValue = 287;
     
     input.value = newValue;
-    updateInvestment();
+    updateInvestmentCalculation();
 }
 
+// FIXED: Better integration with stripe-payment-fixed.js
 function proceedToCheckout() {
     const shares = parseInt(document.getElementById('shareQuantity').value) || 0;
     
@@ -44,25 +60,23 @@ function proceedToCheckout() {
     const urlParams = new URLSearchParams(window.location.search);
     const coinId = urlParams.get('id') || 'abbasid-dinar-773';
     
-    // Get coin data based on URL parameter
+    // Get coin data
     const coinData = getCoinDataById(coinId);
     
     if (coinData && typeof openPaymentModal === 'function') {
-        // Open Stripe payment modal from stripe-payment.js
-        openPaymentModal(coinData);
+        // FIXED: Pass shares as second parameter to pre-fill modal
+        openPaymentModal(coinData, shares);
     } else {
-        // Fallback: Store in localStorage and show message
-        localStorage.setItem('investmentCoinId', coinId);
-        localStorage.setItem('investmentShares', shares);
-        localStorage.setItem('investmentAmount', document.getElementById('totalAmount').textContent);
-        alert('Please ensure stripe-payment.js is loaded. Check the console for errors.');
+        // Fallback for debugging
+        console.error('Payment modal function not found or coin data missing');
+        alert('Please ensure stripe-payment-fixed.js is loaded correctly.');
     }
 }
 
 // Tab Switching
 function switchTab(tabName) {
     // Hide all tabs
-    document.querySelectorAll('.tab-content').forEach(tab => {
+    document.querySelectorAll('.tab-pane').forEach(tab => {
         tab.classList.remove('active');
     });
     
@@ -72,25 +86,41 @@ function switchTab(tabName) {
     });
     
     // Show selected tab
-    document.getElementById(tabName + '-tab').classList.add('active');
+    const selectedTab = document.getElementById(tabName);
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    }
     
     // Set button active
-    event.target.classList.add('active');
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
     
-    // Scroll to tabs section
-    document.querySelector('.coin-details-section').scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-    });
+    // Scroll to tabs section on mobile
+    if (window.innerWidth < 768) {
+        const tabSection = document.querySelector('.details-tabs');
+        if (tabSection) {
+            tabSection.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    }
 }
 
 // 3D Viewer Controls
 function resetCoinCamera() {
     const modelViewer = document.getElementById('coinViewer');
     if (modelViewer) {
-        modelViewer.resetTurntableRotation();
-        modelViewer.cameraOrbit = 'auto auto auto';
+        modelViewer.cameraOrbit = '0deg 75deg 105%';
         modelViewer.fieldOfView = '45deg';
+        
+        // Visual feedback
+        const button = event.currentTarget;
+        if (button) {
+            button.classList.add('active');
+            setTimeout(() => button.classList.remove('active'), 200);
+        }
     }
 }
 
@@ -101,12 +131,14 @@ function toggleCoinRotation() {
         
         // Visual feedback
         const button = event.currentTarget;
-        if (modelViewer.autoRotate) {
-            button.style.background = 'var(--hadal-gold)';
-            button.style.color = 'var(--hadal-deep)';
-        } else {
-            button.style.background = '';
-            button.style.color = '';
+        if (button) {
+            if (modelViewer.autoRotate) {
+                button.classList.add('active');
+                button.title = 'Stop Rotation';
+            } else {
+                button.classList.remove('active');
+                button.title = 'Start Rotation';
+            }
         }
     }
 }
@@ -124,25 +156,35 @@ function toggleCoinFullscreen() {
     }
 }
 
-// Projection Calculator
-function updateProjections() {
-    const amount = parseFloat(document.getElementById('projectionAmount').value) || 0;
-    const years = parseInt(document.getElementById('projectionYears').value) || 10;
-    const annualReturn = 0.08; // 8%
+// FIXED: Simpler function that works with coin-detail-fixed.html
+function adjustQuantity(change) {
+    const input = document.getElementById('shareQuantity');
+    if (!input) return;
     
-    const futureValue = amount * Math.pow(1 + annualReturn, years);
+    const current = parseInt(input.value) || 1;
+    const min = parseInt(input.getAttribute('min')) || 1;
+    const max = parseInt(input.getAttribute('max')) || 287;
     
-    document.getElementById('projectedValue').textContent = '$' + futureValue.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const newValue = Math.max(min, Math.min(max, current + change));
+    input.value = newValue;
+    
+    updateInvestmentCalculation();
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    updateInvestment();
-    updateProjections();
+    // Initialize calculator
+    updateInvestmentCalculation();
+    
+    // Set up quantity input listener
+    const quantityInput = document.getElementById('shareQuantity');
+    if (quantityInput) {
+        quantityInput.addEventListener('input', updateInvestmentCalculation);
+    }
     
     // Add keyboard shortcuts
     document.addEventListener('keydown', (e) => {
-        if (e.target.tagName === 'INPUT') return;
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         
         switch(e.key.toLowerCase()) {
             case 'r':
@@ -165,12 +207,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    console.log('Coin Detail Page Initialized');
-    console.log('Keyboard shortcuts: R (reset), Space (rotate), F (fullscreen), +/- (adjust shares)');
+    console.log('✅ Coin Detail Page Initialized');
+    console.log('📍 Keyboard shortcuts: R (reset), Space (rotate), F (fullscreen), +/- (adjust shares)');
 });
 
-// Helper function to get coin data - mirrors the one in stripe-payment.js
-// This ensures compatibility if stripe-payment.js isn't loaded yet
+// Helper function to get coin data
+// Note: This is duplicated from stripe-payment.js for compatibility
+// Consider consolidating into shared coin-data.js file
 function getCoinDataById(coinId) {
     const coins = {
         'abbasid-dinar-773': {

@@ -129,7 +129,7 @@ function getCoinDataById(coinId) {
 
 // Open payment modal with crypto options
 function openPaymentModal(coinData, initialQuantity) {
-    // Get initial quantity from parameter or localStorage or default to 1
+    // Get initial quantity from parameter or default to 1
     let numShares = initialQuantity || 1;
     
     // Try to get from detail page calculator if available
@@ -139,6 +139,9 @@ function openPaymentModal(coinData, initialQuantity) {
             numShares = parseInt(detailPageQuantity.value) || 1;
         }
     }
+    
+    // Calculate initial ownership percentage
+    const initialOwnership = (numShares / coinData.totalShares) * 100;
     
     // Create modal HTML with payment method selection
     const modalHTML = `
@@ -168,7 +171,7 @@ function openPaymentModal(coinData, initialQuantity) {
                     </div>
                     <div class="summary-row" style="border-top: 1px solid rgba(212, 175, 55, 0.3); padding-top: 15px; margin-top: 10px;">
                         <span style="color: rgba(255,255,255,0.9); font-size: 16px;">You will own</span>
-                        <strong id="ownershipPercent" style="color: var(--gold); font-size: 20px;">${((numShares / coinData.totalShares) * 100).toFixed(2)}%</strong>
+                        <strong id="ownershipPercent" style="color: var(--gold); font-size: 20px;">${initialOwnership.toFixed(2)}%</strong>
                     </div>
                     <div style="text-align: center; color: rgba(255,255,255,0.7); font-size: 14px; margin-top: 10px;">
                         of this historic coin
@@ -179,10 +182,10 @@ function openPaymentModal(coinData, initialQuantity) {
                     <!-- Ownership Percentage Slider -->
                     <div class="form-group">
                         <label for="ownershipSlider">
-                            Own <span id="ownershipPercentDisplay">0.1%</span> of this Historic Coin
+                            Own <span id="ownershipPercentDisplay">${initialOwnership.toFixed(1)}%</span> of this Historic Coin
                         </label>
                         <input type="range" id="ownershipSlider" class="ownership-slider" 
-                               min="0.1" max="10" step="0.1" value="0.1">
+                               min="0.1" max="10" step="0.1" value="${initialOwnership.toFixed(1)}">
                         <div class="slider-labels">
                             <span>0.1%</span>
                             <span>5%</span>
@@ -194,10 +197,10 @@ function openPaymentModal(coinData, initialQuantity) {
                         <label for="numShares">Number of Shares (1000 shares = 100%)</label>
                         <div class="quantity-selector">
                             <button type="button" class="qty-btn" onclick="updateQuantity(-1)">−</button>
-                            <input type="number" id="numShares" name="numShares" value="${numShares}" min="1" max="${coinData.availableShares}" readonly>
+                            <input type="number" id="numShares" name="numShares" value="${numShares}" min="1" max="${coinData.availableShares}">
                             <button type="button" class="qty-btn" onclick="updateQuantity(1)">+</button>
                         </div>
-                        <small class="input-hint">Shares auto-calculated from percentage slider</small>
+                        <small class="input-hint">Adjust using slider above or type directly</small>
                     </div>
                     
                     <div class="total-calculation">
@@ -312,19 +315,61 @@ function openPaymentModal(coinData, initialQuantity) {
     document.getElementById('paymentModal').dataset.coinData = JSON.stringify(coinData);
     document.getElementById('paymentModal').dataset.paymentMethod = 'card';
     
-    // Set up form handler
-    document.getElementById('investmentForm').addEventListener('submit', handlePayment);
-    
-    // Update calculations when quantity changes
-    document.getElementById('numShares').addEventListener('input', updateCalculations);
-    
-    // Initial calculation
-    updateCalculations();
+    // Set up event listeners
+    setupModalEventListeners();
     
     // Show modal
     setTimeout(() => {
         document.getElementById('paymentModal').classList.add('show');
     }, 10);
+}
+
+// Set up all modal event listeners
+function setupModalEventListeners() {
+    // Form submission handler
+    document.getElementById('investmentForm').addEventListener('submit', handlePayment);
+    
+    // Ownership slider handler
+    const ownershipSlider = document.getElementById('ownershipSlider');
+    const numSharesInput = document.getElementById('numShares');
+    
+    ownershipSlider.addEventListener('input', function() {
+        const modal = document.getElementById('paymentModal');
+        const coinData = JSON.parse(modal.dataset.coinData);
+        
+        const ownershipPercent = parseFloat(this.value);
+        const shares = Math.round((ownershipPercent / 100) * coinData.totalShares);
+        
+        // Update shares input
+        numSharesInput.value = Math.max(1, Math.min(coinData.availableShares, shares));
+        
+        // Update display
+        document.getElementById('ownershipPercentDisplay').textContent = ownershipPercent.toFixed(1) + '%';
+        
+        // Update calculations
+        updateCalculations();
+    });
+    
+    // Number of shares input handler
+    numSharesInput.addEventListener('input', function() {
+        const modal = document.getElementById('paymentModal');
+        const coinData = JSON.parse(modal.dataset.coinData);
+        
+        let shares = parseInt(this.value) || 1;
+        shares = Math.max(1, Math.min(coinData.availableShares, shares));
+        this.value = shares;
+        
+        // Update slider
+        const ownershipPercent = (shares / coinData.totalShares) * 100;
+        ownershipSlider.value = Math.min(10, ownershipPercent).toFixed(1);
+        document.getElementById('ownershipPercentDisplay').textContent = ownershipPercent.toFixed(1) + '%';
+        
+        // Update calculations
+        updateCalculations();
+    });
+    
+    // Initial calculation
+    updateCalculations();
 }
 
 // Select payment method
@@ -394,14 +439,16 @@ function closePaymentModal() {
     }
 }
 
-// Update quantity
+// Update quantity using +/- buttons
 function updateQuantity(change) {
     const input = document.getElementById('numShares');
     const current = parseInt(input.value) || 1;
     const max = parseInt(input.max);
     const newValue = Math.max(1, Math.min(max, current + change));
     input.value = newValue;
-    updateCalculations();
+    
+    // Trigger input event to update slider and calculations
+    input.dispatchEvent(new Event('input'));
 }
 
 // Update price calculations
@@ -420,7 +467,7 @@ function updateCalculations() {
     document.getElementById('processingFee').textContent = `$${processingFee.toFixed(2)}`;
     document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
     
-    // Update ownership percentage
+    // Update ownership percentage in summary
     const ownershipPercent = (numShares / coinData.totalShares) * 100;
     const ownershipEl = document.getElementById('ownershipPercent');
     if (ownershipEl) {
@@ -460,6 +507,15 @@ async function handlePayment(e) {
         }
     }
     
+    // Validate form inputs
+    const investorName = document.getElementById('investorName').value.trim();
+    const investorEmail = document.getElementById('investorEmail').value.trim();
+    
+    if (!investorName || !investorEmail) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
     // Disable button and show loading
     button.disabled = true;
     button.innerHTML = `
@@ -474,8 +530,6 @@ async function handlePayment(e) {
         // Get form data
         const coinData = JSON.parse(modal.dataset.coinData);
         const numShares = parseInt(document.getElementById('numShares').value);
-        const investorName = document.getElementById('investorName').value;
-        const investorEmail = document.getElementById('investorEmail').value;
         
         const subtotal = coinData.sharePrice * numShares;
         const processingFee = subtotal * 0.029 + 0.30;
@@ -489,24 +543,6 @@ async function handlePayment(e) {
             cryptoCurrency = document.querySelector('input[name="crypto"]:checked').value;
             cryptoNetwork = document.querySelector('input[name="network"]:checked').value;
         }
-        
-        // Prepare payment data
-        const paymentData = {
-            coinId: coinData.id,
-            coinTitle: `${coinData.title} (${coinData.period})`,
-            coinPeriod: coinData.period,
-            coinCaliph: coinData.caliph,
-            numShares: numShares,
-            sharePrice: coinData.sharePrice,
-            subtotal: subtotal,
-            processingFee: processingFee,
-            totalAmount: totalAmount,
-            investorName: investorName,
-            investorEmail: investorEmail,
-            paymentMethod: paymentMethod,
-            cryptoCurrency: cryptoCurrency,
-            cryptoNetwork: cryptoNetwork
-        };
         
         // Stripe Payment Links (from your Stripe Dashboard)
         const paymentLinks = {
@@ -529,18 +565,24 @@ async function handlePayment(e) {
         // Add prefill parameters for name and email
         checkoutUrl += `&prefilled_email=${encodeURIComponent(investorEmail)}`;
         
-        // For crypto payments, Stripe will show crypto options in checkout
-        // The payment methods are already configured in your Stripe Payment Links
+        // Log payment details for debugging
+        console.log('Payment Details:', {
+            coinId: coinData.id,
+            coinTitle: `${coinData.title} (${coinData.period})`,
+            numShares: numShares,
+            totalAmount: totalAmount,
+            paymentMethod: paymentMethod,
+            cryptoCurrency: cryptoCurrency,
+            cryptoNetwork: cryptoNetwork
+        });
         
         // Redirect to Stripe Checkout
         window.location.href = checkoutUrl;
         
-        // Checkout will redirect automatically via window.location.href
-        
     } catch (error) {
         console.error('Payment error:', error);
         
-        // Show simple error message
+        // Show error message
         alert(`Unable to process payment: ${error.message}\n\nPlease try again or contact support.`);
         
         // Reset button
@@ -548,9 +590,6 @@ async function handlePayment(e) {
         button.innerHTML = originalHTML;
     }
 }
-
-// Remove the showPaymentError function as it's no longer needed
-// We're using Stripe Payment Links which don't require backend setup
 
 // Add modal styles
 const modalStyles = `
@@ -697,6 +736,54 @@ const modalStyles = `
     outline: none;
     border-color: var(--gold);
     background: rgba(255, 255, 255, 0.08);
+}
+
+.input-hint {
+    display: block;
+    margin-top: 5px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 13px;
+    font-style: italic;
+}
+
+/* Ownership Slider Styles */
+.ownership-slider {
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    -webkit-appearance: none;
+    margin: 10px 0;
+}
+
+.ownership-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+.ownership-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+    margin-top: 5px;
 }
 
 .quantity-selector {
@@ -931,65 +1018,6 @@ const modalStyles = `
     to { transform: rotate(360deg); }
 }
 
-/* Error Modal Styles */
-.error-modal-content {
-    max-width: 700px;
-}
-
-.error-icon {
-    font-size: 64px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.error-modal-content h3 {
-    color: var(--gold);
-    font-size: 28px;
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-.error-modal-content p {
-    color: rgba(255, 255, 255, 0.8);
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.setup-steps, .alternative-option {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.setup-steps h4, .alternative-option h4 {
-    color: var(--gold);
-    margin-bottom: 15px;
-}
-
-.setup-steps ol, .alternative-option ol {
-    color: rgba(255, 255, 255, 0.8);
-    margin-left: 20px;
-}
-
-.setup-steps li, .alternative-option li {
-    margin-bottom: 10px;
-    line-height: 1.6;
-}
-
-.setup-steps code {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 2px 8px;
-    border-radius: 4px;
-    color: #4ade80;
-    font-family: monospace;
-}
-
-.setup-steps ul {
-    margin-left: 20px;
-    margin-top: 8px;
-}
-
 @media (max-width: 768px) {
     .payment-modal-content, .error-modal-content {
         margin: 20px;
@@ -1021,4 +1049,3 @@ if (!document.getElementById('stripe-payment-styles')) {
 }
 
 console.log('💳 Stripe payment module loaded with crypto support (USDC, USDP)');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
